@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$is_admin = isset($_SESSION['is_admin']) ? $_SESSION['is_admin'] : 0; // Check if the user is an admin
+$is_admin = isset($_SESSION['isAdmin']) ? $_SESSION['isAdmin'] : 0; // Check if the user is an admin
 
 // Handle different AJAX actions
 $action = isset($_POST['action']) ? $_POST['action'] : '';
@@ -75,7 +75,7 @@ function fetchPosts($conn, $user_id) {
     $isAdmin = false;
     if ($isAdminResult) {
         $row = mysqli_fetch_assoc($isAdminResult);
-        $isAdmin = (bool) $row['is_admin'];
+        $isAdmin = (bool) $is_admin;
     }
 
     echo json_encode([
