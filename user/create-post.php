@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <textarea name="description" placeholder="Caption..." style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; height: 120px;" required></textarea>
 
         <!-- File Upload -->
-        <input type="file" name="file" accept="image/*,video/*" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%;">
+        <input type="file" name="file" accept="image/*,video/*" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%;"> 
 
         <!-- Culture Elements (Hidden for Non-Admin Users) -->
         <?php if ($_SESSION['isAdmin'] == 1) { ?>
@@ -226,11 +226,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><input type="checkbox" name="learning_styles[]" value="Read & Write"> Read & Write</label><br>
             <label><input type="checkbox" name="learning_styles[]" value="Kinesthetic"> Kinesthetic</label><br>
         </div>
-    </form>
 
-    <!-- Fixed Submit Button -->
-    <button type="submit" style="padding: 10px; background-color: #007bff; color: white; font-size: 16px; border: none; border-radius: 4px; cursor: pointer; position: absolute; bottom: 20px; width: 100%;">Post</button>
+        <!-- Submit Button -->
+        <button type="submit" style="padding: 10px; background-color: #007bff; color: white; font-size: 16px; border: none; border-radius: 4px; cursor: pointer;">Post</button>
+    </form>
 </div>
+
 
 
   
