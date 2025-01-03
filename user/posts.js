@@ -1,5 +1,6 @@
 $(document).ready(function() {
     let currentUserId = null;
+    let isAdmin = null;
     let allPosts = []; // Store all posts for filtering
     let activeFilters = {
         cultureElements: [],
@@ -65,6 +66,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 currentUserId = response.current_user_id;
+                isAdmin = response.isAdmin; // Store admin status
                 allPosts = response.posts; // Store all posts
                 filterAndDisplayPosts(); // Apply any active filters
             },
@@ -73,6 +75,7 @@ $(document).ready(function() {
             }
         });
     }
+    
 
     // Display posts function
     function displayPosts(posts) {
@@ -86,7 +89,7 @@ $(document).ready(function() {
     }
     document.addEventListener('click', function (event) {
         if (event.target.classList.contains('like-btn')) {
-fetchPosts();
+            fetchPosts();
         }
     });
     
@@ -132,8 +135,8 @@ fetchPosts();
                 <div class="post-header">
                     <img src="${post.profile_picture}" alt="${post.username}" class="profile-pic">
                     <span>${post.username}</span>
-                    ${post.user_id == currentUserId ? `
-                        <button class="delete-post">🗑️</button>
+                    ${(post.user_id == currentUserId || isAdmin) ? `
+                        <button class="delete-post" data-post-id="${post.id}">🗑️</button>
                     ` : ''}
                 </div>
                 <div class="post-content">
