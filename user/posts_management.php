@@ -69,19 +69,11 @@ function fetchPosts($conn, $user_id) {
         $posts[] = $post;
     }
 
-    // Check if the user is an admin
-    $isAdminQuery = "SELECT is_admin FROM users WHERE id = $user_id";
-    $isAdminResult = mysqli_query($conn, $isAdminQuery);
-    $isAdmin = false;
-    if ($isAdminResult) {
-        $row = mysqli_fetch_assoc($isAdminResult);
-        $isAdmin = (bool) $is_admin;
-    }
 
     echo json_encode([
         'posts' => $posts,
         'current_user_id' => $user_id,
-        'isAdmin' => $isAdmin
+        'isAdmin' => isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] ? true : false
     ]);
 }
 

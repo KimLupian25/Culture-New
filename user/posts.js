@@ -1,6 +1,6 @@
 $(document).ready(function() {
+    let isAdmin = false; // Define isAdmin at the top level
     let currentUserId = null;
-    let isAdmin = null;
     let allPosts = []; // Store all posts for filtering
     let activeFilters = {
         cultureElements: [],
@@ -66,7 +66,8 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 currentUserId = response.current_user_id;
-                isAdmin = response.isAdmin; // Store admin status
+                isAdmin = response.isAdmin; // Get admin status from response
+
                 allPosts = response.posts; // Store all posts
                 filterAndDisplayPosts(); // Apply any active filters
             },
@@ -135,7 +136,7 @@ $(document).ready(function() {
                 <div class="post-header">
                     <img src="${post.profile_picture}" alt="${post.username}" class="profile-pic">
                     <span>${post.username}</span>
-                    ${(post.user_id == currentUserId || isAdmin) ? `
+                    ${(post.user_id == currentUserId  || isAdmin) ? `
                         <button class="delete-post" data-post-id="${post.id}">🗑️</button>
                     ` : ''}
                 </div>
