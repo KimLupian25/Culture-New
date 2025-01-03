@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
+$is_admin = isset($_SESSION['is_admin']) ? $_SESSION['is_admin'] : 0; // Check if the user is an admin
 
 // Handle different AJAX actions
 $action = isset($_POST['action']) ? $_POST['action'] : '';
@@ -27,11 +28,11 @@ switch($action) {
         break;
     
     case 'delete_post':
-        deletePost($conn, $user_id);
+        deletePost($conn, $user_id, $is_admin);
         break;
     
     case 'delete_comment':
-        deleteComment($conn, $user_id);
+        deleteComment($conn, $user_id, $is_admin);
         break;
 }
 
@@ -90,7 +91,6 @@ function toggleLike($conn, $user_id) {
     }
 }
 
-
 function addComment($conn, $user_id) {
     $post_id = $_POST['post_id'];
     $comment_text = trim(mysqli_real_escape_string($conn, $_POST['comment_text']));
@@ -105,13 +105,14 @@ function addComment($conn, $user_id) {
     echo json_encode(['status' => 'error', 'message' => 'Comment cannot be empty']);
 }
 
-function deletePost($conn, $user_id) {
+function deletePost($conn, $user_id, $is_admin) {
     $post_id = $_POST['post_id'];
     $stmt = "SELECT user_id FROM posts WHERE id = $post_id";
     $result = mysqli_query($conn, $stmt);
     $post = mysqli_fetch_assoc($result);
 
-    if ($post && $post['user_id'] == $user_id) {
+    // Check if the user is an admin or the owner of the post
+    if ($post && ($post['user_id'] == $user_id || $is_admin)) {
         mysqli_query($conn, "DELETE FROM likes WHERE post_id = $post_id");
         mysqli_query($conn, "DELETE FROM comments WHERE post_id = $post_id");
         mysqli_query($conn, "DELETE FROM posts WHERE id = $post_id");
@@ -122,13 +123,14 @@ function deletePost($conn, $user_id) {
     }
 }
 
-function deleteComment($conn, $user_id) {
+function deleteComment($conn, $user_id, $is_admin) {
     $comment_id = $_POST['comment_id'];
     $stmt = "SELECT user_id FROM comments WHERE id = $comment_id";
     $result = mysqli_query($conn, $stmt);
     $comment = mysqli_fetch_assoc($result);
 
-    if ($comment && $comment['user_id'] == $user_id) {
+    // Check if the user is an admin or the owner of the comment
+    if ($comment && ($comment['user_id'] == $user_id || $is_admin)) {
         mysqli_query($conn, "DELETE FROM comments WHERE id = $comment_id");
         echo json_encode(['status' => 'success']);
         exit();

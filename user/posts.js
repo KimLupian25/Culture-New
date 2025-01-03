@@ -1,7 +1,62 @@
 $(document).ready(function() {
     let currentUserId = null;
+    let allPosts = []; // Store all posts for filtering
+    let activeFilters = {
+        cultureElements: [],
+        learningStyles: []
+    };
+    function initializeFilters() {
+        // Culture Elements filters
+        $('.menu-section a[href^="geography"], .menu-section a[href^="history"], .menu-section a[href^="demographics"], .menu-section a[href^="culture"]').click(function(e) {
+            e.preventDefault();
+            const element = $(this).text();
+            
+            if (activeFilters.cultureElements.includes(element)) {
+                activeFilters.cultureElements = activeFilters.cultureElements.filter(item => item !== element);
+                $(this).removeClass('active');
+            } else {
+                activeFilters.cultureElements.push(element);
+                $(this).addClass('active');
+            }
+            
+            filterAndDisplayPosts();
+        });
 
-    // Fetch posts function
+        // Learning Styles filters
+        $('.menu-section input[type="checkbox"]').change(function() {
+            const style = $(this).parent().text().trim();
+            
+            if (this.checked) {
+                activeFilters.learningStyles.push(style);
+            } else {
+                activeFilters.learningStyles = activeFilters.learningStyles.filter(item => item !== style);
+            }
+            
+            filterAndDisplayPosts();
+        });
+    }
+
+    function filterAndDisplayPosts() {
+        let filteredPosts = allPosts;
+
+        if (activeFilters.cultureElements.length > 0) {
+            filteredPosts = filteredPosts.filter(post => {
+                const postElements = post.culture_elements ? post.culture_elements.split(',').map(e => e.trim()) : [];
+                return activeFilters.cultureElements.some(filter => postElements.includes(filter));
+            });
+        }
+
+        if (activeFilters.learningStyles.length > 0) {
+            filteredPosts = filteredPosts.filter(post => {
+                const postStyles = post.learning_styles ? post.learning_styles.split(',').map(s => s.trim()) : [];
+                return activeFilters.learningStyles.some(filter => postStyles.includes(filter));
+            });
+        }
+
+        displayPosts(filteredPosts);
+    }
+
+    // Modified fetchPosts function
     function fetchPosts() {
         $.ajax({
             url: 'posts_management.php',
@@ -10,7 +65,8 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 currentUserId = response.current_user_id;
-                displayPosts(response.posts);
+                allPosts = response.posts; // Store all posts
+                filterAndDisplayPosts(); // Apply any active filters
             },
             error: function(xhr, status, error) {
                 console.error('Error fetching posts:', error);
@@ -48,7 +104,29 @@ fetchPosts();
                 </div>
             </div>
         `).join('');
-
+    
+        const cultureElements = post.culture_elements ? `
+            <div class="culture-elements">
+                <strong>Culture Elements:</strong>
+                <ul>
+                    ${post.culture_elements.split(',').map(element => `
+                        <li>${element}</li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : '';
+    
+        const learningStyles = post.learning_styles ? `
+            <div class="learning-styles">
+                <strong>Learning Styles:</strong>
+                <ul>
+                    ${post.learning_styles.split(',').map(style => `
+                        <li>${style}</li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : '';
+    
         const postHtml = `
             <div class="post" data-post-id="${post.id}">
                 <div class="post-header">
@@ -63,6 +141,8 @@ fetchPosts();
                     <p>${post.description}</p>
                     ${post.file_path ? `<img src="${post.file_path}" alt="${post.title}" style="width: 100%;">` : ''}
                 </div>
+                ${cultureElements}
+                ${learningStyles}
                 <div class="post-interactions">
                     <button class="like-btn ${post.user_liked > 0 ? 'liked' : ''}">
                         👍 ${post.like_count} Likes
@@ -82,9 +162,10 @@ fetchPosts();
                 </div>
             </div>
         `;
-
+    
         return postHtml;
     }
+    
 
     // Event Delegation for Dynamic Elements
     $(document).on('click', '.like-btn', function() {
@@ -193,5 +274,6 @@ fetchPosts();
     });
 
     // Initial fetch of posts
+    initializeFilters();
     fetchPosts();
 });

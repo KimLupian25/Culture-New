@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = htmlspecialchars($_POST['title']);
     $description = htmlspecialchars($_POST['description']);
     $culture_elements = isset($_POST['culture_elements']) ? implode(',', $_POST['culture_elements']) : '';
+    $learning_styles = isset($_POST['learning_styles']) ? implode(',', $_POST['learning_styles']) : ''; // Capture learning styles
     $uploaded_file = '';
 
     // Handle file upload
@@ -26,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Insert post into database
-    $stmt = $conn->prepare("INSERT INTO posts (user_id, title, description, file_path, culture_elements) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param('issss', $user_id, $title, $description, $uploaded_file, $culture_elements);
+    $stmt = $conn->prepare("INSERT INTO posts (user_id, title, description, file_path, culture_elements, learning_styles) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('isssss', $user_id, $title, $description, $uploaded_file, $culture_elements, $learning_styles); // Add learning_styles
 
     if ($stmt->execute()) {
         echo "<script>
@@ -44,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -191,32 +193,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 
-<div class="container" style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
+
+<div class="container" style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; position: relative; display: flex; flex-direction: column; height: 500px;">
     <h1 style="text-align: center; margin-bottom: 20px;">Create a Post</h1>
 
-    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px; flex: 1; overflow-y: auto; padding-bottom: 50px;">
         <!-- Title Input -->
         <input type="text" name="title" placeholder="Title" maxlength="300" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%;">
 
         <!-- Description Input -->
-        <textarea name="description" placeholder="Caption..." rows="6" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%;"></textarea>
+        <textarea name="description" placeholder="Caption..." style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; height: 120px;" required></textarea>
 
         <!-- File Upload -->
         <input type="file" name="file" accept="image/*,video/*" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%;">
 
-        <!-- Culture Elements -->
-        <div style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            <h3 style="margin-bottom: 10px;">Select Elements</h3>
-            <label><input type="checkbox" name="culture_elements[]" value="Geography"> Geography</label><br>
-            <label><input type="checkbox" name="culture_elements[]" value="History"> History</label><br>
-            <label><input type="checkbox" name="culture_elements[]" value="Demographics"> Demographics</label><br>
-            <label><input type="checkbox" name="culture_elements[]" value="Culture"> Culture</label><br>
-        </div>
+        <!-- Culture Elements (Hidden for Non-Admin Users) -->
+        <?php if ($_SESSION['isAdmin'] == 1) { ?>
+            <div id="culture-elements" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <h3 style="margin-bottom: 10px;">Select Culture Elements</h3>
+                <label><input type="checkbox" name="culture_elements[]" value="Geography"> Geography</label><br>
+                <label><input type="checkbox" name="culture_elements[]" value="History"> History</label><br>
+                <label><input type="checkbox" name="culture_elements[]" value="Demographics"> Demographics</label><br>
+                <label><input type="checkbox" name="culture_elements[]" value="Culture"> Culture</label><br>
+            </div>
+        <?php } ?>
 
-        <!-- Submit Button -->
-        <button type="submit" style="padding: 10px; background-color: #007bff; color: white; font-size: 16px; border: none; border-radius: 4px; cursor: pointer;">Post</button>
+        <!-- Learning Styles -->
+        <div style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <h3 style="margin-bottom: 10px;">Select Learning Styles</h3>
+            <label><input type="checkbox" name="learning_styles[]" value="Visual"> Visual</label><br>
+            <label><input type="checkbox" name="learning_styles[]" value="Auditory & Oral"> Auditory & Oral</label><br>
+            <label><input type="checkbox" name="learning_styles[]" value="Read & Write"> Read & Write</label><br>
+            <label><input type="checkbox" name="learning_styles[]" value="Kinesthetic"> Kinesthetic</label><br>
+        </div>
     </form>
+
+    <!-- Fixed Submit Button -->
+    <button type="submit" style="padding: 10px; background-color: #007bff; color: white; font-size: 16px; border: none; border-radius: 4px; cursor: pointer; position: absolute; bottom: 20px; width: 100%;">Post</button>
 </div>
+
+
   
   <script>
     function previewFile() {
@@ -237,95 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             reader.readAsDataURL(fileInput.files[0]);
         }
     }
-//   function submitPost(event) {
-//     event.preventDefault();  
-    
-//     // Validate form
-//     if (!validateForm()) {
-//       return;  
-//     }
-  
-//     // Get the post content
-//     const title = document.querySelector('.post-title').value;
-//     const description = document.querySelector('.post-description').value;
-    
-//     // Get selected elements
-//     const selectedElements = [];
-//     const checkboxes = document.querySelectorAll('input[name="culture-element"]:checked');
-//     checkboxes.forEach(checkbox => selectedElements.push(checkbox.value));
-  
-//     // Get the image URL from file input
-//     const fileInput = document.getElementById('file-upload');
-//     const file = fileInput.files[0];
-//     const fileURL = file ? URL.createObjectURL(file) : null;
-  
-//     // Get current date and time
-//     const date = new Date();
-//     const dateString = date.toLocaleDateString();
-//     const timeString = date.toLocaleTimeString();
-  
-//     // Store post data in localStorage
-//     const post = {
-//       userName: 'Kimberly',  
-//       profilePicture: 'https://scontent.fcrk2-4.fna.fbcdn.net/v/t39.30808-6/430904312_3358006431175559_8389278005556431906_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=88ekN_AnR2sQ7kNvgFc7cvO&_nc_zt=23&_nc_ht=scontent.fcrk2-4.fna&_nc_gid=AawfqEjgJeostIoIHf9iJLV&oh=00_AYDMytPYZvfxIcLP9CGRnOk1Ndx6uZl8jnSLD-58-VuBrA&oe=6761EC50',
-//       title: title,
-//       description: description,
-//       elements: selectedElements,
-//       image: fileURL,  
-//       date: dateString,
-//       time: timeString
-//     };
-  
-//     // Get existing posts, or create an empty array if none exist
-//     let posts = JSON.parse(localStorage.getItem('posts')) || [];
-//     posts.push(post);
-//     localStorage.setItem('posts', JSON.stringify(posts));
-  
-//     // Redirect to explore.php page
-//     window.location.href = 'explore.php';
-//   }
-  
-//   function validateForm() {
-//     // Get selected elements
-//     const checkboxes = document.querySelectorAll('input[name="culture-element"]:checked');
-    
-//     // Check if at least one checkbox is selected
-//     if (checkboxes.length === 0) {
-//       alert("Please select at least one element.");
-//       return false; 
-//     }
-    
-//     // If at least one checkbox is selected, allow form submission
-//     return true;
-//   }
-  
-//   function previewFile() {
-//     const fileInput = document.getElementById('file-upload');
-//     const filePreview = document.getElementById('file-preview');
-//     const file = fileInput.files[0];
-  
-//     // Clear previous preview
-//     filePreview.innerHTML = '';
-  
-//     if (file) {
-//       const reader = new FileReader();
-  
-//       reader.onload = function(e) {
-//         const fileType = file.type.split('/')[0];
-//         let preview;
-  
-//         if (fileType === 'image') {
-//           preview = `<img src="${e.target.result}" alt="File Preview" class="file-preview-image">`;
-//         } else if (fileType === 'video') {
-//           preview = `<video controls class="file-preview-video"><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
-//         }
-  
-//         filePreview.innerHTML = preview;
-//       };
-  
-//       reader.readAsDataURL(file);
-//     }
-//   }
+
   </script>
   
 
