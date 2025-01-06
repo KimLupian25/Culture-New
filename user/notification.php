@@ -4,13 +4,21 @@ session_start();
 
 if (!isset($_SESSION['user_id'])) {
     echo "<script>
-            alert('Please log in to update your information.');
+            alert('Please log in to access this page.');
             window.location.href = 'login.php';
           </script>";
     exit();
 }
-$currentUserId = $_SESSION['user_id'];
+
+if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] != 1) {
+    echo "<script>
+            alert('Access denied. Admins only.');
+            window.location.href = 'home.php'; // Redirect to the homepage or another appropriate page
+          </script>";
+    exit();
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +27,8 @@ $currentUserId = $_SESSION['user_id'];
     <title>Cultural Database</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
     <body>
     <style>
     /* General */
@@ -35,6 +45,64 @@ $currentUserId = $_SESSION['user_id'];
             line-height: 1.6;
             padding-top: 80px;
         }
+        .notification-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #365486;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: #365486;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
     </style>
     
     <!-- Navigation Bar -->
@@ -46,7 +114,7 @@ $currentUserId = $_SESSION['user_id'];
             <div>
                 <a href="home.php">Home</a>
                 <a href="create-post.php">+ Create</a>
-                <a href="explore.php" class="active">Explore</a>
+                <a href="explore.php" >Explore</a>
                 <a href="notification.php">Notification</a>
                 <div class="dropdown">
                     <a href="#" class="dropdown-btn" onclick="toggleDropdown()">Menu</a>
@@ -56,7 +124,7 @@ $currentUserId = $_SESSION['user_id'];
                         <a href="#">Logout</a>
                     </div>
                 </div>
-                <a href="generate_report.php">Generate Report</a>
+                <a href="generate_report.php" class="active">Generate Report</a>
                 <a href="login.php">Log In</a>
             </div>
     </div>
@@ -153,12 +221,69 @@ $currentUserId = $_SESSION['user_id'];
             dropdownContent.classList.toggle("show");
         }
     </script>
+    <div class="notification-container">
+        <?php
+        // Fetch recent posts with user information
+        $query = "SELECT 
+                    p.title,
+                    p.created_at,
+                    u.username,
+                    SUBSTRING(u.username, 1, 1) as avatar_letter
+                 FROM posts p
+                 JOIN users u ON p.user_id = u.id
+                 ORDER BY p.created_at DESC
+                 LIMIT 10";
+        
+        $result = $conn->query($query);
 
-<div class="explore-container">
-    <div id="post-display"></div>
-  </div>
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $time_ago = getTimeAgo(strtotime($row['created_at']));
+                echo '<div class="notification-item">
+                        <div class="notification-avatar">
+                            ' . htmlspecialchars($row['avatar_letter']) . '
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">
+                                ' . htmlspecialchars($row['username']) . ' created a new post
+                            </div>
+                            <div>' . htmlspecialchars($row['title']) . '</div>
+                            <div class="notification-time">' . $time_ago . '</div>
+                        </div>
+                    </div>';
+            }
+        } else {
+            echo '<div class="no-notifications">No recent posts</div>';
+        }
+
+        // Helper function to convert timestamp to "time ago" format
+        function getTimeAgo($timestamp) {
+            $time_difference = time() - $timestamp;
+
+            if ($time_difference < 60) {
+                return "Just now";
+            } elseif ($time_difference < 3600) {
+                $minutes = round($time_difference / 60);
+                return $minutes . " minute" . ($minutes != 1 ? "s" : "") . " ago";
+            } elseif ($time_difference < 86400) {
+                $hours = round($time_difference / 3600);
+                return $hours . " hour" . ($hours != 1 ? "s" : "") . " ago";
+            } elseif ($time_difference < 604800) {
+                $days = round($time_difference / 86400);
+                return $days . " day" . ($days != 1 ? "s" : "") . " ago";
+            } else {
+                return date("M j, Y", $timestamp);
+            }
+        }
+        ?>
+    </div>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="posts.js"></script>
+  <script>
+        setInterval(function() {
+            location.reload();
+        }, 60000);
+    </script>
   <style>
     /* Post container */
 .post {
@@ -306,7 +431,7 @@ $currentUserId = $_SESSION['user_id'];
 }
 
    .explore-container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 20px auto;
       padding: 20px;
       background-color: #fff;

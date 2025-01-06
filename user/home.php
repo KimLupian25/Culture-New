@@ -43,20 +43,21 @@ if (!isset($_SESSION['user_id'])) {
             <h1>Kulturifiko</h1>
         </div>
         <div>
-            <a href="home.php" class="active">Home</a>
-            <a href="create-post.php">+ Create</a>
-            <a href="explore.php">Explore</a>
-            <a href="">Notification</a>
-            <div class="dropdown">
-                <a href="#" class="dropdown-btn" onclick="toggleDropdown()">Menu</a>
-                <div class="dropdown-content">
-                    <a href="profile.php">Profile</a>
-                    <a href="settings.php">Settings</a>
-                    <a href="#">Logout</a>
+                <a href="home.php">Home</a>
+                <a href="create-post.php">+ Create</a>
+                <a href="explore.php" class="active">Explore</a>
+                <a href="notification.php">Notification</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-btn" onclick="toggleDropdown()">Menu</a>
+                    <div class="dropdown-content">
+                        <a href="profile.php">Profile</a>
+                        <a href="settings.php">Settings</a>
+                        <a href="#">Logout</a>
+                    </div>
                 </div>
+                <a href="generate_report.php">Generate Report</a>
+                <a href="login.php">Log In</a>
             </div>
-            <a href="login.php">Log In</a>
-        </div>
     </div>
 
     <style>

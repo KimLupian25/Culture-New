@@ -36,7 +36,7 @@
             <a href="home.php">Home</a>
             <a href="create-post.php">+ Create</a>
             <a href="explore.php">Explore</a>
-            <a href="">Notification</a>
+            <a href="notification.php">Notification</a>
             <div class="dropdown">
                 <a href="#" class="dropdown-btn" onclick="toggleDropdown()">Menu</a>
                 <div class="dropdown-content">
@@ -45,6 +45,7 @@
                     <a href="#">Logout</a>
                 </div>
             </div>
+            <a href="generate_report.php">Generate Report</a>
             <a href="login.php">Log In</a>
         </div>
     </div>

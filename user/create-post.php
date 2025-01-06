@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="Home.php">Home</a>
             <a href="create-post.php" class="active">+ Create</a>
             <a href="explore.php">Explore</a>
-            <a href="">Notification</a>
+            <a href="notification.php">Notification</a>
             <div class="dropdown">
                 <a href="#" class="dropdown-btn" onclick="toggleDropdown()">Menu</a>
                 <div class="dropdown-content">
