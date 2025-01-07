@@ -9,14 +9,9 @@ if (!isset($_SESSION['user_id'])) {
           </script>";
     exit();
 }
+$user_id = $_SESSION['user_id'];
 
-if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] != 1) {
-    echo "<script>
-            alert('Access denied. Admins only.');
-            window.location.href = 'home.php'; // Redirect to the homepage or another appropriate page
-          </script>";
-    exit();
-}
+$isAdmin = $_SESSION['isAdmin'];
 ?>
 
 <!DOCTYPE html>
@@ -223,18 +218,37 @@ if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] != 1) {
     </script>
     <div class="notification-container">
         <?php
-        // Fetch recent posts with user information
-        $query = "SELECT 
-                    p.title,
-                    p.created_at,
-                    u.username,
-                    SUBSTRING(u.username, 1, 1) as avatar_letter
-                 FROM posts p
-                 JOIN users u ON p.user_id = u.id
-                 ORDER BY p.created_at DESC
-                 LIMIT 10";
-        
-        $result = $conn->query($query);
+        // Check if the user is an admin or not and adjust the query accordingly
+        if ($isAdmin) {
+            // Admin: Fetch all posts
+            $query = "SELECT 
+                        p.title,
+                        p.created_at,
+                        u.username,
+                        SUBSTRING(u.username, 1, 1) AS avatar_letter
+                    FROM posts p
+                    JOIN users u ON p.user_id = u.id
+                    ORDER BY p.created_at DESC
+                    LIMIT 10";
+            $stmt = $conn->prepare($query);
+        } else {
+            // Non-admin: Fetch posts by the current user
+            $query = "SELECT 
+                        p.title,
+                        p.created_at,
+                        u.username,
+                        SUBSTRING(u.username, 1, 1) AS avatar_letter
+                    FROM posts p
+                    JOIN users u ON p.user_id = u.id
+                    WHERE p.user_id = ?
+                    ORDER BY p.created_at DESC
+                    LIMIT 10";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $user_id);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -255,6 +269,8 @@ if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] != 1) {
         } else {
             echo '<div class="no-notifications">No recent posts</div>';
         }
+
+        $stmt->close();
 
         // Helper function to convert timestamp to "time ago" format
         function getTimeAgo($timestamp) {
@@ -277,6 +293,7 @@ if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] != 1) {
         }
         ?>
     </div>
+
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
