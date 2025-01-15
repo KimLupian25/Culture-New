@@ -243,6 +243,290 @@ categories.forEach(category => {
 });
 </script>
 
+<!-- Hero Section -->
+<section id="home" class="hero">
+  <div class="container hero-container">
+      <div class="hero-content">
+        <h1>Experience the Culture</h1>
+        <p>Explore the beauty of global traditions and connect with communities worldwide. Start your journey with Kulturifiko today.</p>
+        <a href="explore.html" class="cta-btn explore-btn">Explore Now</a>
+      </div>
+      <br>
+      <div class="hero-image">
+        <img src="https://i.pinimg.com/736x/be/8c/6c/be8c6cbf1d049825ffd2df0442f0c66b.jpg" alt="Cultural Exploration">
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about">
+    <div class="container">
+      <h2>Who We Are</h2>
+      <p>We are a platform that celebrates cultural diversity, creating a space to share stories, events, and experiences that connect us all.</p>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <div class="container">
+      <h2>Our Features</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="icon fas fa-globe"></i>
+          <h3>Global Community</h3>
+          <p>Connect with like-minded people across the globe.</p>
+        </div>
+        <div class="feature-card">
+          <i class="icon fas fa-calendar-alt"></i>
+          <h3>Event Listings</h3>
+          <p>Discover events near you or share your own.</p>
+        </div>
+        <div class="feature-card">
+          <i class="icon fas fa-photo-video"></i>
+          <h3>Interactive Media</h3>
+          <p>Engage with cultural photos, videos, and more.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="gallery-section">
+    <div class="container">
+      <h2>Gallery</h2>
+      <p>Explore snapshots of cultural moments from around the world.</p>
+      <div class="gallery-grid">
+        <img src="https://i.pinimg.com/736x/76/b5/c2/76b5c226f33b37337934bce7ab9c0159.jpg" alt="Cultural Image 1">
+        <img src="https://i.pinimg.com/736x/1d/c6/2f/1dc62ff8ecf9107fe08af2ca13b1a2f5.jpg" alt="Cultural Image 2">
+        <img src="https://i.pinimg.com/736x/fd/d3/68/fdd36868ad02196d0f17c2bc2e022d43.jpg" alt="Cultural Image 3">
+        <img src="https://i.pinimg.com/736x/ef/d2/64/efd264f714d553dda14755cb78034699.jpg" alt="Cultural Image 4">
+      </div>
+    </div>
+  </section>  
+  
+  <!-- Partners Section -->
+  <section id="partners" class="partners-section">
+    <div class="container">
+      <h2>Our Partners</h2>
+      <p>We collaborate with these incredible organizations to bring cultures together.</p>
+      <div class="partners-grid">
+        <img src="https://i.pinimg.com/736x/08/5a/d4/085ad448933875d5c3f3da93bfaac820.jpg" alt="UNICEF Logo">
+        <img src="https://i.pinimg.com/736x/3f/89/b2/3f89b281abd80b6d92cc131652f5ddfc.jpg" alt="Red Cross Logo">
+        <img src="https://i.pinimg.com/736x/80/5b/b9/805bb99df768a69afe3b83b7d4e3b9a6.jpg" alt="Smithsonian Logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPvtIXri6znQj6CQiMAj7HyYFcw9LnGdFv2g&s" alt="Cultural Survival Logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2Sin1P5o24LYo6gbinywSWVoPo68INzkvRA&s" alt="WHO Logo">
+        <img src="https://www.cdnlogo.com/logos/n/6/national-geographic-channel.svg" alt="National Geographic Logo">
+      </div>
+    </div>
+  </section>   
+
+  <style>
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Hero Section */
+.hero {
+  background-color: #f0f8ff;
+  padding: 60px 20px;
+}
+
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 50%;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: #555555;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.cta-btn {
+  background-color: #003366;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-btn:hover {
+  background-color: #00509e;
+}
+
+.hero-image {
+  flex: 1;
+  max-width: 50%;
+  text-align: right;
+}
+
+
+/* Features Section */
+.features {
+  background-color: #f7fbff;
+  padding: 40px 20px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  text-align: center;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card .icon {
+  font-size: 40px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+/* Gallery Section */
+.gallery-section,
+.partners-section {
+  padding: 60px 20px;
+  background-color: #f0f8ff;
+  text-align: center;
+}
+
+.container h2 {
+  font-size: 2.5rem;
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+.container p {
+  font-size: 1.2rem;
+  color: #555555;
+  margin-bottom: 40px;
+}
+
+/* Gallery Section */
+.gallery-section {
+  background-color: #f0f8ff; /* Light blue background */
+  padding: 50px 0;
+  text-align: center;
+}
+
+.gallery-section h2 {
+  font-size: 2.5rem;
+  color: #007bff; /* Blue color */
+  margin-bottom: 20px;
+}
+
+.gallery-section p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.gallery-grid img:hover {
+  transform: scale(1.05);
+}
+
+/* Partners Section */
+.partners-section {
+  background-color: #ffffff;
+  padding: 50px 0;
+  text-align: center;
+}
+
+.partners-section h2 {
+  font-size: 2.5rem;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.partners-section p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.partners-grid img {
+  width: 120px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.partners-grid img:hover {
+  transform: scale(1.1);
+}
+  </style>
+
+  <script>
+    // Testimonials Slider
+let currentSlide = 0;
+
+const testimonials = document.querySelectorAll('.testimonial');
+const prevBtn = document.querySelector('.prev-btn');
+const nextBtn = document.querySelector('.next-btn');
+
+function showSlide(index) {
+  testimonials.forEach((testimonial, i) => {
+    testimonial.style.transform = `translateX(${100 * (i - index)}%)`;
+  });
+}
+
+prevBtn.addEventListener('click', () => {
+  currentSlide = (currentSlide - 1 + testimonials.length) % testimonials.length;
+  showSlide(currentSlide);
+});
+
+nextBtn.addEventListener('click', () => {
+  currentSlide = (currentSlide + 1) % testimonials.length;
+  showSlide(currentSlide);
+});
+
+showSlide(currentSlide);
+
+  </script>
+
 <!-- Sidebar -->
 <div class="sidebar">
     <div class="logo-section">
